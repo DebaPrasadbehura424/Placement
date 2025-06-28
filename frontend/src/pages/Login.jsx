@@ -17,7 +17,7 @@ function Login() {
     e.preventDefault();
     try {
       await axios
-        .post("http://localhost:5500/auth/login", formData)
+        .post("https://placement-backend-zeta.vercel.app/auth/login", formData)
         .then((res) => {
           sessionStorage.setItem("token", res.data.token);
           sessionStorage.setItem("userId", res.data.user.id);

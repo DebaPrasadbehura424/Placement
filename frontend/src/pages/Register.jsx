@@ -23,7 +23,10 @@ function Register() {
 
     try {
       await axios
-        .post("http://localhost:5500/auth/register", formData)
+        .post(
+          "https://placement-backend-zeta.vercel.app/auth/register",
+          formData
+        )
         .then((res) => {
           // console.log(res.data);
           // sessionStorage.setItem("token", res.data.token);

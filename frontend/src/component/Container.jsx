@@ -4,11 +4,10 @@ import axios from "axios";
 function Container() {
   const [topics, setTopics] = useState([]);
   const [solvedStatus, setSolvedStatus] = useState({});
-  const [openTopics, setOpenTopics] = useState({}); // Track open/closed state for each topic
-  const [allOpen, setAllOpen] = useState(false); // Track if all topics are open
+  const [openTopics, setOpenTopics] = useState({});
+  const [allOpen, setAllOpen] = useState(false);
   const userId = sessionStorage.getItem("userId");
 
-  // State for tracking solved counts with predefined totals
   const [solvedCounts, setSolvedCounts] = useState({
     total: 0,
     easy: 0,
@@ -16,7 +15,6 @@ function Container() {
     hard: 0,
   });
 
-  // Predefined total counts
   const TOTAL_QUESTIONS = 176;
   const EASY_TOTAL = 31;
   const MEDIUM_TOTAL = 108;
@@ -25,23 +23,24 @@ function Container() {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        const res = await axios.get("http://localhost:5500/auth/me", {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        });
+        const res = await axios.get(
+          "https://placement-backend-zeta.vercel.app/auth/me",
+          {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            },
+          }
+        );
 
         const fetchedTopics = res.data.topics || [];
         setTopics(fetchedTopics);
 
-        // Initialize openTopics with all topics closed
         const initialOpenTopics = {};
         fetchedTopics.forEach((topic) => {
           initialOpenTopics[topic.sub] = false;
         });
         setOpenTopics(initialOpenTopics);
 
-        // Create status map and calculate solved counts
         const statusMap = {};
         let easyCount = 0;
         let mediumCount = 0;
@@ -82,7 +81,6 @@ function Container() {
     };
     setSolvedStatus(updated);
 
-    // Find the question's difficulty to update counts
     let questionDifficulty = null;
     topics.forEach((t) => {
       if (t.sub === topic) {
@@ -91,9 +89,8 @@ function Container() {
       }
     });
 
-    // Update solved counts
     setSolvedCounts((prev) => {
-      const isSolving = !solvedStatus[key]; // True if marking as solved, false if unmarking
+      const isSolving = !solvedStatus[key];
       const newCounts = { ...prev };
       if (questionDifficulty) {
         if (isSolving) {
@@ -108,17 +105,19 @@ function Container() {
     });
 
     try {
-      await axios.patch("http://localhost:5500/questions/toggle-question", {
-        userId,
-        topic,
-        questionId,
-      });
+      await axios.patch(
+        "https://placement-backend-zeta.vercel.app/questions/toggle-question",
+        {
+          userId,
+          topic,
+          questionId,
+        }
+      );
     } catch (err) {
       console.error("Toggle error", err);
     }
   };
 
-  // Toggle individual topic open/closed
   const toggleTopic = (topicSub) => {
     setOpenTopics((prev) => ({
       ...prev,
@@ -126,7 +125,6 @@ function Container() {
     }));
   };
 
-  // Toggle all topics open/closed
   const toggleAllTopics = () => {
     const newOpenState = !allOpen;
     const updatedOpenTopics = {};
@@ -151,7 +149,6 @@ function Container() {
         PrepTrail DSA Sheet
       </h1>
 
-      {/* Stats Box */}
       <div className="max-w-4xl mx-auto mb-6 sm:mb-8 bg-white p-4 sm:p-6 rounded-2xl shadow-lg">
         <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-700">
           Progress
@@ -192,7 +189,6 @@ function Container() {
         </div>
       </div>
 
-      {/* Toggle All Button */}
       <div className="max-w-4xl mx-auto mb-4 sm:mb-6">
         <button
           onClick={toggleAllTopics}
@@ -202,7 +198,6 @@ function Container() {
         </button>
       </div>
 
-      {/* Topics and Questions */}
       <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
         {topics.map((topic, index) => (
           <div
