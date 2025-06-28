@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-// require("dotenv").config();
 
 const authRoutes = require("./server/routes/auth");
 const questionRoutes = require("./server/routes/questions");
@@ -23,12 +22,17 @@ app.use(
     ],
   })
 );
+app.get("/", (_, res) => {
+  res.send("app is ready");
+});
 
 app.use("/auth", authRoutes);
-app.use("/questions", questionRoutes); // ✅ add this line
+app.use("/questions", questionRoutes);
 
 mongoose
-  .connect("mongodb://localhost:27017/Placement")
+  .connect(
+    "mongodb+srv://debaprasadbehura89:s5dY5LSzdhymR4AB@cluster0.9chhe.mongodb.net/PlacementCenter?retryWrites=true&w=majority&appName=Cluster0;"
+  )
   .then(() => {
     console.log("MongoDB connected");
     app.listen(5500, () => console.log("Server running on port 5500"));
